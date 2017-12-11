@@ -5,7 +5,7 @@ from sklearn.model_selection import train_test_split
 np.random.seed(0)
 BASE_DIR = ''
 
-MAX_SENTENCE_PER_SESSION = 32
+MAX_SENTENCE_PER_SESSION = 5
 
 VALIDATION_SPLIT = 0.1
 PRELOAD = False
@@ -14,6 +14,9 @@ REGRESSION = False
 
 SENTENCE_EMBEDDING_SIZE = None
 SESSION_EMBEDDING_SIZE = None
+
+from liwc_tagger import get_features, fast_tag
+features, liwc = get_features('liwc_feature.json')
 
 
 def split_train_test_set(df):
@@ -26,6 +29,7 @@ def split_train_test_set(df):
 langdetect_count = 0
 
 df_reviews = pd.read_csv('oneperline.csv')  # , encoding='utf-8')
+
 df_reviews['len'] = df_reviews.text.str.len()
 df_reviews['rating'] = df_reviews['rating'].round()
 
@@ -49,7 +53,6 @@ pad_sentence = df_rev_balanced.text.map(lambda x: truncate_or_pad(x, MAX_SENTENC
 
 
 def sentence_embedding_func(last_str, str):
-    from liwc_tagger import tag
     global SENTENCE_EMBEDDING_SIZE
     words = len(str.split(" "))
 
@@ -111,9 +114,9 @@ def sentence_embedding_func(last_str, str):
     ret = embed_speaker + embed_sentence_length + embed_word_length + embed_sentiment + embed_uniq_rate + embed_question + embed_overlap
     SENTENCE_EMBEDDING_SIZE = len(ret)
 
-    # liwc = tag(str)
-    # return ret + liwc
-    return ret
+    liwc_features = fast_tag(str, features=features, liwc=liwc)
+    return ret + liwc_features
+    # return ret
 
 
 def session_embedding_func(str):
@@ -159,8 +162,12 @@ X_session_aux_embedding /= np.max(X_session_aux_embedding, axis=(0,))
 SIZE = X_sentence_aux_embedding.shape[0]
 X_sentence_aux_embedding = X_sentence_aux_embedding.reshape(SIZE, -1)
 
+
 X = np.concatenate([X_sentence_aux_embedding, X_session_aux_embedding], axis=1)
+X = np.nan_to_num(X)
+
 Y = df_rev_balanced.rating.values.astype(int)
+
 
 X_train, X_test, y_train, y_test = train_test_split(X, Y,
                                                     test_size=VALIDATION_SPLIT,

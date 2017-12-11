@@ -43,13 +43,40 @@ def tag(sentence, features, liwc):
     
     return tags
 
+
+def fast_tag(sentence, features, liwc):
+    sentence = sentence.lower()
+
+    tags = []
+    true_feature = []
+
+    for feature in features:
+        if feature in true_feature:
+            continue
+        all_words = liwc[feature]
+
+        for w in all_words:
+            if w in sentence:
+                true_feature.append(feature)
+                # feature confirmed, no need to confirm again
+                break
+    for feature in features:
+        if feature in true_feature:
+            tags.append(1)
+        else:
+            tags.append(0)
+
+    return tags
+
 def main():
     features, liwc = get_features('liwc_feature.json')
     tags = tag('Donald Trump was elected as the 45th president of the united states of america last night', features, liwc)
     print(tags)
+    tags = fast_tag('Donald Trump was elected as the 45th president of the united states of america last night', features, liwc)
+    print(tags)
+    print(len(tags))
 
-    splits = tags.split()
-    print(len(splits))
+
 
 if __name__ == '__main__':
     main()
