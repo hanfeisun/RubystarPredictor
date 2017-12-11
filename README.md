@@ -17,3 +17,16 @@ Classifiers for chatbot log
 
 - Accuracy is 0.672835
 
+## Add LIWC features (5 sentences)
+
+Logistic Regression
+
+- Kappa score is 0.190853
+- Accuracy is 0.676536
+
+Linear SVM
+
+- Kappa score is 0.170880
+- Accuracy is 0.675796
+
+
