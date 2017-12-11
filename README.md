@@ -13,6 +13,7 @@ Classifiers for chatbot log
 
 ## Baseline Performance
 
-kappa score is 0.156174
-accuracy is 0.672835
+- Kappa score is 0.156174
+
+- Accuracy is 0.672835
 
