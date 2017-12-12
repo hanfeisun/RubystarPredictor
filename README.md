@@ -35,3 +35,7 @@ Linear SVM
 - Kappa score is 0.134208
 - Accuracy is 0.678016
 
+## HAN with 32 LIWC
+
+- Kappa score is 0.250078
+- Accuracy is 0.687639
