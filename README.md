@@ -30,3 +30,8 @@ Linear SVM
 - Accuracy is 0.675796
 
 
+## HAN
+
+- Kappa score is 0.134208
+- Accuracy is 0.678016
+
